@@ -1,0 +1,44 @@
+discovery-url: http://keycloak.192.168.56.103.nip.io/auth/realms/app
+
+client-id: gatekeeper-api
+client-secret: '123456'
+
+listen: 0.0.0.0:3000
+
+redirection-url: http://gk.192.168.56.103.nip.io
+encryption-key: 1234567890123456
+enable-session-cookies: true
+enable-logout-redirect: true
+secure-cookie: false
+
+upstream-url: http://app:3000
+
+upstream-keepalives: true
+skip-upstream-tls-verify: true
+scopes: []
+enable-security-filter: true
+resources:
+  - uri: /
+    white-listed: true
+  - uri: /_nuxt/*
+    white-listed: true
+  - uri: /_loading/*
+    white-listed: true
+  - uri: /__webpack_hmr/*
+    white-listed: true
+  - uri: /img/*
+    white-listed: true
+  - uri: /favicon.ico
+    white-listed: true
+  - uri: /user
+    roles:
+      - user
+  - uri: /user/*
+    roles:
+      - user
+  - uri: /admin
+    roles:
+      - admin
+  - uri: /admin/*
+    roles:
+      - admin

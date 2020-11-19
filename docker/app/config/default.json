@@ -1,0 +1,9 @@
+{
+  "system": {
+    "port": 3000,
+    "jsonLimit": "10mb",
+    "errorLogStatus": [500],
+    "hideLogApis": ["POST#/v1/auth", "POST#/v1/users"],
+    "$comment": "hideLogApisはリクエスト、レスポンスログを出力しないAPIのリスト"
+  }
+}

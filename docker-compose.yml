@@ -1,0 +1,69 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    image: traefik:latest
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/traefik/traefik.yml:/etc/traefik/traefik.yml
+
+  keycloak-gatekeeper:
+    container_name: keycloak-gatekeeper
+    image: keycloak/keycloak-gatekeeper
+    command: ['--config', '/opt/config.yml']
+    volumes:
+      - ./volumes/gatekeeper/config.yml:/opt/config.yml
+    expose:
+      - 3000
+    restart: always
+    depends_on:
+      - keycloak
+      - app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gk.rule=Host(`gk.192.168.56.103.nip.io`)
+
+  keycloak:
+    container_name: keycloak
+    image: jboss/keycloak:latest
+    expose:
+      - 8080
+    volumes:
+      - ./volumes/keycloak/realm-app.json:/opt/jboss/import/realm-app.json
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_FRONTEND_URL: http://keycloak.192.168.56.103.nip.io/auth
+      KEYCLOAK_IMPORT: /opt/jboss/import/realm-app.json
+    depends_on:
+      - postgres
+      - app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kc.rule=Host(`keycloak.192.168.56.103.nip.io`)
+
+  postgres:
+    image: postgres
+    volumes:
+      - /var/postgres/data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+
+  app:
+    container_name: app
+    build: docker/app
+    expose:
+      - 3000

@@ -1,0 +1,12 @@
+api:
+  dashboard: true
+  insecure: true
+
+providers:
+  docker:
+    exposedByDefault: false
+    defaultRule: "Host(`{{ index .Labels \"traefik.host\" }}.192.168.56.103.nip.io`)"
+
+entryPoints:
+  http:
+    address: ":80"

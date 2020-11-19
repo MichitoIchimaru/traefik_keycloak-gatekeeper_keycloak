@@ -1,0 +1,39 @@
+{
+    "appenders": {
+        "access": {
+            "type": "dateFile",
+            "filename": "logs/access.log",
+            "pattern": "yyyyMMdd"
+        },
+        "system": {
+            "type": "dateFile",
+            "filename": "logs/trace.log",
+            "daysToKeep": 3,
+            "compress": true,
+            "pattern": "yyyyMMdd"
+        },
+        "error": {
+            "type": "dateFile",
+            "filename": "logs/error.log",
+            "pattern": "yyyyMMdd"
+        },
+        "console": {
+            "type": "console"
+        }
+    },
+    "categories": {
+        "default": {
+            "appenders": ["system", "console"],
+            "level": "debug"
+        },
+        "access": {
+            "appenders": ["access", "console"],
+            "level": "info"
+        },
+        "error": {
+            "appenders": ["error", "console"],
+            "level": "error"
+        }
+
+    }
+}
